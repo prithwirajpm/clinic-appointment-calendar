@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -8,8 +10,10 @@ const LoginForm = () => {
     e.preventDefault();
     if (email === "staff@clinic.com" && password === "123456") {
       localStorage.setItem("auth", "true");
+      toast.success("Login successful!");
     } else {
-      alert("Invalid credentials");
+      //   alert("Invalid credentials");
+      toast.error("Invalid email or password!");
     }
   };
 
@@ -40,6 +44,7 @@ const LoginForm = () => {
           Login
         </button>
       </form>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
