@@ -7,7 +7,7 @@ export const handleDeleteConfirm = (index, handleDelete) => {
         <p>Are you sure you want to delete this booking Details?</p>
         <div className="flex gap-2 mt-2">
           <button
-            className="bg-red-600 text-white px-3 py-1 rounded"
+            className="bg-[var(--primarycolor)] text-[var(--textcolorsecondary)] px-3 py-1 rounded"
             onClick={() => {
               handleDelete(index); // will use selectedDate from closure
               toast.dismiss(toastId);

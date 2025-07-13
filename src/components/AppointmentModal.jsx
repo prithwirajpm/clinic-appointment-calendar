@@ -79,8 +79,10 @@ const AppointmentModal = ({
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-6 rounded shadow-md w-96">
-        <h3 className="text-xl font-bold mb-4">Add Appointment</h3>
+      <div className="bg-white p-6 rounded-2xl shadow-md w-96">
+        <h3 className="text-xl font-bold mb-4 text-[var(--textcolorteritery)]">
+          Appointment
+        </h3>
 
         <div className="mb-4">
           <Select
@@ -88,6 +90,7 @@ const AppointmentModal = ({
             value={patient}
             onChange={setPatient}
             placeholder="Select Patient"
+            className="outline-[var(--primarycolor)]"
           />
         </div>
 
@@ -97,18 +100,19 @@ const AppointmentModal = ({
             value={doctor}
             onChange={setDoctor}
             placeholder="Select Doctor"
+            className="outline-[var(--primarycolor)]"
           />
         </div>
 
         <input
           type="time"
-          className="w-full p-2 border mb-4 rounded"
+          className="w-full p-2 border mb-4 rounded outline-[var(--primarycolor)]"
           value={time}
           onChange={(e) => setTime(e.target.value)}
         />
 
         <select
-          className="w-full p-2 border mb-4 rounded"
+          className="w-full p-2 border mb-4 rounded outline-[var(--primarycolor)]"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
         >
@@ -121,7 +125,7 @@ const AppointmentModal = ({
         <input
           type="text"
           placeholder="Token Number"
-          className="w-full p-2 border mb-4 rounded bg-gray-100 cursor-not-allowed"
+          className="w-full p-2 border mb-4 rounded bg-gray-100 cursor-not-allowed outline-[var(--primarycolor)]"
           value={token}
           disabled
         />
@@ -131,7 +135,7 @@ const AppointmentModal = ({
             Cancel
           </button>
           <button
-            className="bg-blue-600 text-white px-4 py-2 rounded"
+            className="bg-[var(--primarycolor)] text-white px-4 py-2 rounded"
             onClick={handleSave}
           >
             Save

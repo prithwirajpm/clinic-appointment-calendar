@@ -5,6 +5,9 @@ import { getAppointments, deleteAppointment } from "../utils/storage";
 import AppointmentModal from "./AppointmentModal";
 import { handleDeleteConfirm } from "./handleDeleteConfirm";
 import Navigation from "./Navigation";
+import EditSquareIcon from "@mui/icons-material/EditSquare";
+import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -36,12 +39,21 @@ const CalendarView = () => {
     setAppointments(updated);
   };
 
+  const statuscolor = {
+    Booked: "text-blue-600",
+    Cancelled: "text-red-500",
+    Rounding: "text-yellow-500",
+    Completed: "text-green-600",
+  };
+
   return (
-    <div>
+    <div className="bg-[var(--secondarycolor)] h-screen overflow-hidden">
       <Navigation />
-      <div className="p-4">
-        <h2 className="text-2xl font-bold mb-4">Appointment Calendar</h2>
-        <div className="flex flex-col lg:flex-row gap-4">
+      <div className="p-4 h-[70vh] h-[90vh] overflow-y-auto">
+        <h2 className="text-2xl font-bold mb-4 text-[var(--textcolorteritery)]">
+          Calendar
+        </h2>
+        <div className="flex flex-col lg:flex-row gap-4 align-center items-center">
           <Calendar
             onChange={setSelectedDate}
             value={selectedDate}
@@ -50,9 +62,10 @@ const CalendarView = () => {
               setSelectedDate(value);
               setOpenModal(true);
             }}
+            minDate={new Date()}
           />
           <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-2">
+            <h3 className="text-lg font-semibold mb-2 text-[var(--textcolorteritery)]">
               {selectedDate.toDateString()}
             </h3>
 
@@ -60,12 +73,12 @@ const CalendarView = () => {
               <input
                 type="text"
                 placeholder="Search by patient"
-                className="border p-2 rounded w-1/2"
+                className="border p-2 rounded w-1/2 outline-[var(--primarycolor)]"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
               <select
-                className="border p-2 rounded w-1/2"
+                className="border p-2 rounded w-1/2 outline-[var(--primarycolor)]"
                 value={doctorFilter}
                 onChange={(e) => setDoctorFilter(e.target.value)}
               >
@@ -77,61 +90,69 @@ const CalendarView = () => {
                       .map((a) => a.doctor)
                   ),
                 ].map((doc, i) => (
-                  <option key={i} value={doc}>
+                  <option
+                    key={i}
+                    value={doc}
+                    className="hover:bg-[var(--primarycolor)]"
+                  >
                     {doc}
                   </option>
                 ))}
               </select>
+              <button
+                className="bg-[var(--primarycolor)] text-[var(--textcolorsecondary)] px-4 py-2 rounded hover:animate-pulse"
+                onClick={() => {
+                  setEditIndex(null);
+                  setOpenModal(true);
+                }}
+              >
+                Booking
+              </button>
             </div>
 
             <ul className="space-y-2">
               {filteredAppointments.map((appt, index) => (
-                <li key={index} className="bg-gray-100 p-3 rounded shadow">
-                  <p>
-                    <strong>Patient:</strong> {appt.patient}
-                  </p>
-                  <p>
-                    <strong>Doctor:</strong> {appt.doctor}
-                  </p>
-                  <p>
-                    <strong>Time:</strong> {appt.time}
-                  </p>
-                  <p>
-                    <strong>Status:</strong> {appt.status}
-                  </p>
-                  <p>
-                    <strong>Token:</strong> {appt.token}
-                  </p>
+                <li
+                  key={index}
+                  className="bg-[var(--teritorycolor)] p-3 rounded shadow text-[var(--textcolorprimary)]"
+                >
+                  <div className="w-full flex">
+                    <div className="w-1/12 font-bold">Patient</div>
+                    <div className="w-11/12">: {appt.patient}</div>
+                  </div>
+                  <div className="w-full flex">
+                    <div className="w-1/12 font-bold">Doctor</div>
+                    <div className="w-11/12 font-bold">: {appt.doctor}</div>
+                  </div>
+                  <div className="w-full flex">
+                    <div className="w-1/12 font-bold">Time</div>
+                    <div className="w-11/12">: {appt.time}</div>
+                  </div>
+                  <div className={`w-full flex ${statuscolor[appt.status]}`}>
+                    <div className="w-1/12 font-bold">Status</div>
+                    <div className="w-11/12 font-bold">: {appt.status}</div>
+                  </div>
+                  <div className="w-full flex">
+                    <div className="w-1/12 font-bold">Token</div>
+                    <div className="w-11/12">: {appt.token}</div>
+                  </div>
                   <div className="flex gap-2 mt-2">
-                    <button
-                      className="bg-yellow-500 text-white px-3 py-1 rounded"
+                    <EditSquareIcon
+                      className="text-[var(--textcolorteritery)] cursor-pointer"
                       onClick={() => {
                         setEditIndex(index);
                         setOpenModal(true);
                       }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="bg-red-600 text-white px-3 py-1 rounded"
+                    />
+
+                    <DeleteIcon
+                      className="text-[var(--textcolorteritery)] cursor-pointer	"
                       onClick={() => handleDeleteConfirm(index, handleDelete)}
-                    >
-                      Delete
-                    </button>
+                    />
                   </div>
                 </li>
               ))}
             </ul>
-
-            <button
-              className="mt-4 bg-green-600 text-white px-4 py-2 rounded"
-              onClick={() => {
-                setEditIndex(null);
-                setOpenModal(true);
-              }}
-            >
-              Add Appointment
-            </button>
           </div>
         </div>
 
