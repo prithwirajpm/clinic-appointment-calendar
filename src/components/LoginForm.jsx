@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const LoginForm = () => {
@@ -44,7 +44,6 @@ const LoginForm = () => {
           Login
         </button>
       </form>
-      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
