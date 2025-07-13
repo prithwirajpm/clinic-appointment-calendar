@@ -1,14 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import patients from "../data/patients.json";
 import doctors from "../data/doctors.json";
+import {
+  saveAppointment,
+  updateAppointment,
+  getAppointments,
+} from "../utils/storage";
 import Select from "react-select";
 import { toast } from "react-toastify";
-import { saveAppointment } from "../utils/storage";
 
-const AppointmentModal = ({ date, close, updateAppointments }) => {
-  const [patient, setPatient] = useState(null);
-  const [doctor, setDoctor] = useState(null);
-  const [time, setTime] = useState("");
+const AppointmentModal = ({
+  date,
+  close,
+  updateAppointments,
+  existingAppointment = null,
+  editIndex = null,
+}) => {
+  const [patient, setPatient] = useState(
+    existingAppointment?.patient
+      ? {
+          label: existingAppointment.patient,
+          value: existingAppointment.patient,
+        }
+      : null
+  );
+  const [doctor, setDoctor] = useState(
+    existingAppointment?.doctor
+      ? { label: existingAppointment.doctor, value: existingAppointment.doctor }
+      : null
+  );
+  const [time, setTime] = useState(existingAppointment?.time || "");
+  const [status, setStatus] = useState(existingAppointment?.status || "Booked");
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    if (!existingAppointment) {
+      const existing = getAppointments();
+      const todayAppointments = existing[date.toDateString()] || [];
+      const maxToken =
+        todayAppointments.length > 0
+          ? Math.max(
+              ...todayAppointments.map((appt) => parseInt(appt.token || 0) || 0)
+            )
+          : 0;
+      setToken((maxToken + 1).toString());
+    } else {
+      setToken(existingAppointment.token || "");
+    }
+  }, [date, existingAppointment]);
 
   const handleSave = () => {
     if (!patient || !doctor || !time) {
@@ -16,11 +55,21 @@ const AppointmentModal = ({ date, close, updateAppointments }) => {
       return;
     }
 
-    const result = saveAppointment(date, {
+    const newAppt = {
       patient: patient.label,
       doctor: doctor.label,
       time,
-    });
+      status,
+      token,
+    };
+
+    let result;
+    if (editIndex !== null) {
+      result = updateAppointment(date, editIndex, newAppt);
+    } else {
+      result = saveAppointment(date, newAppt);
+      updateAppointments(result);
+    }
     updateAppointments(result);
     close();
   };
@@ -37,8 +86,8 @@ const AppointmentModal = ({ date, close, updateAppointments }) => {
           <Select
             options={patientOptions}
             value={patient}
-            placeholder="Select Patient"
             onChange={setPatient}
+            placeholder="Select Patient"
           />
         </div>
 
@@ -46,8 +95,8 @@ const AppointmentModal = ({ date, close, updateAppointments }) => {
           <Select
             options={doctorOptions}
             value={doctor}
-            placeholder="Select Doctor"
             onChange={setDoctor}
+            placeholder="Select Doctor"
           />
         </div>
 
@@ -56,6 +105,25 @@ const AppointmentModal = ({ date, close, updateAppointments }) => {
           className="w-full p-2 border mb-4 rounded"
           value={time}
           onChange={(e) => setTime(e.target.value)}
+        />
+
+        <select
+          className="w-full p-2 border mb-4 rounded"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <option value="Booked">Booked</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Rounding">Rounding</option>
+          <option value="Completed">Completed</option>
+        </select>
+
+        <input
+          type="text"
+          placeholder="Token Number"
+          className="w-full p-2 border mb-4 rounded bg-gray-100 cursor-not-allowed"
+          value={token}
+          disabled
         />
 
         <div className="flex justify-end gap-2">
